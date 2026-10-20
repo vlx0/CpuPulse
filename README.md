@@ -1,0 +1,33 @@
+# CpuPulse
+
+**Нагрузка процессора вживую.** Сумма, ядра и кто жрёт сверху — без Диспетчера задач.
+
+**Автор:** darkshade ([@vlx0](https://github.com/vlx0))
+
+**365 дней open source** · **неделя 9 — «Мониторинг»** · день 57.
+
+---
+
+## Возможности
+
+- общая загрузка CPU
+- полоски по логическим ядрам
+- топ процессов по CPU
+- график последних секунд
+- только Win32, без pip
+
+## Установка
+
+```powershell
+git clone https://github.com/vlx0/CpuPulse.git
+cd CpuPulse
+pythonw run_cpupulse.pyw
+```
+
+Или `start.bat`.
+
+Нужен Windows 10+ и Python 3.10+. Внешних зависимостей нет.
+
+## Лицензия
+
+MIT. См. [LICENSE](LICENSE).
