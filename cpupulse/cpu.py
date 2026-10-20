@@ -161,6 +161,8 @@ class CpuSampler:
         self._busy, self._total = sample_times()
         self._cores = sample_cores()
         self._procs = list_processes()
+        self._proc_total = self._total
+        self._top: list[tuple[str, int, float]] = []
 
     def tick(self) -> CpuSnap:
         busy, total = sample_times()
@@ -175,10 +177,14 @@ class CpuSampler:
                 dtt = t1 - t0
                 cores_pct.append(0.0 if dtt <= 0 else max(0.0, min(100.0, 100.0 * (b1 - b0) / dtt)))
         self._cores = cores_now or self._cores
+        return CpuSnap(total_pct, cores_pct, self._top, self.name, self.n)
 
+    def sample_top(self) -> list[tuple[str, int, float]]:
         now = list_processes()
+        _, total = sample_times()
+        pdt = total - self._proc_total
         top: list[tuple[str, int, float]] = []
-        if dt > 0:
+        if pdt > 0:
             for pid, (exe, used) in now.items():
                 prev = self._procs.get(pid)
                 if not prev:
@@ -186,8 +192,10 @@ class CpuSampler:
                 d = used - prev[1]
                 if d <= 0:
                     continue
-                pct = 100.0 * d / dt
-                top.append((exe, pid, max(0.0, min(100.0 * self.n, pct))))
+                pct = 100.0 * d / pdt
+                top.append((exe, pid, max(0.0, min(100.0, pct))))
         top.sort(key=lambda x: x[2], reverse=True)
         self._procs = now
-        return CpuSnap(total_pct, cores_pct, top[:10], self.name, self.n)
+        self._proc_total = total
+        self._top = top[:10]
+        return self._top
